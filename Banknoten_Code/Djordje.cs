@@ -9,13 +9,13 @@ namespace Banknoten_Code
 {
     public  class Djordje
     {
-        private List<string> codeList = new List<string>(); //why does private work here?
-        private List<int> intList = new List<int>();        //why does private work here?
+        private List<string> codeList = new List<string>(); 
+        private List<int> intList = new List<int>();        //in PHP the list would be accessed like that: $this->inList.Add(...);
 
         //protected int digitsum { get; private set; }
         //protected int checksum { get;  private set; }
-        private int digitsum { get; set; }  //getter & seeter are private by default?
-        private int checksum { get; set; }  //getter & seeter are private by default?
+        private int digitsum { get; set; }  //getter & seeter are private by default!
+        private int checksum { get; set; }  //getter & seeter are private by default!
         private string eingabe { get; set; }
         private bool b { get; set; }
         //public string faelschung = ("Die Prüfsumme betraegt {0}\nAchtung: gefaelschte Banknote!", checksum);//chechsum needed to be static to be able to do this.. but then it's not working...
@@ -39,27 +39,28 @@ namespace Banknoten_Code
             //all needed methods;
             SaveInList();
             b = obEingabePasst();  
-            //ContinueProgram();
-            return ContinueProgram() + ChecksumComparison();    //nice, works
+            ContinueProgram();
+            return ChecksumComparison();    //normale String-Verkettung; better naming convention; cannot understand what happens. and it's my own code, few days old... 
         }
 
-        private string ContinueProgram()   //put if in a surrounding method that will conain more of them... :)
+        private void ContinueProgram()   //put if in a surrounding method that will contain more of them... :) --> but name it so that it tells me at least something at the first glance..
         {
             if (!b)
             {
-                return FailReturn();   //Console.WriteLine("Fail");
+                //return FailReturn();   //or in case no string shell be returned: throw runtime exception to be able to use the code in i.e. Win Forms
+                throw new ApplicationException(FailReturn());   //works fine
             }
             else
             {
                 BuildIntList();
-                CalcDigitSum(); //look above p int digitsum; no digitsum = calcdigitsum needed
+                CalcDigitSum();
                 checksum = BerechneJ();
-                return null;    // "" is possible as well
+                //return null;    // "" is possible as well
             }
 
             //(!b) ? Method1() : Method2(); NOT POSSIBLE!
         }
-        public void SaveInList()
+        private void SaveInList()
         {
             //Buchstabe in Zahl und an Stelle 0 in codeList
             foreach (char x in eingabe)
@@ -69,7 +70,7 @@ namespace Banknoten_Code
         }
         private string FailReturn()
         {
-            return "Fail: ungueltiger Code. Siehe Doku.";   //CW weg! für get...result
+            return "Fail: ungueltiger Code. Siehe Doku.";
         }
         private void BuildIntList()
         {
@@ -88,18 +89,14 @@ namespace Banknoten_Code
         }
         public string ChecksumComparison()  //bc this is being called from within class Program, it needs to be public. But Encapsulation here?
         {
-            if (b)  //dass die Ausgabe Prüfsumme... ausgegeben wird, wenn falscher code eingegeben wurde. Test (falsche UND (zu kurze ODER zu lange) string-eingabe erfolgreich
+            if (int.Parse(codeList[11]) != checksum)    //12.Stelle des Codes! (L)(10xN)(J)
             {
-                if (int.Parse(codeList[11]) != checksum)    //12.Stelle des Codes! (L)(10xN)(J)
-                {
-                    return $"Die Pruefsumme betraegt {checksum}\ngefaelschte Banknote!";
-                }
-                else
-                {
-                    return $"Die Pruefsumme betraegt {checksum}\nOriginale Banknote!";
-                }
+                return $"Die Pruefsumme betraegt {checksum}\ngefaelschte Banknote!";
             }
-            else return "";
+            else
+            {
+                return $"Die Pruefsumme betraegt {checksum}\nOriginale Banknote!";
+            }
         }
         private int wandleBuchstabeInZahl()
         {
