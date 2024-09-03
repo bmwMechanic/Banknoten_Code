@@ -12,7 +12,7 @@ namespace Banknoten_Code
         public Leo(string eingabe)
         {
             Djordje dj = new Djordje(eingabe);
-            LeosDigitsum = dj.get
+            //LeosDigitsum = dj.get
 
         }
     }
